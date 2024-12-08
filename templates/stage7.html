@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Stage 7: Graph Database for Complex Relationships</h2>
+<form method="POST">
+    <input type="text" name="query" value="{{ query }}" placeholder="Enter genre">
+    <button type="submit">Search</button>
+</form>
+<p><strong>SQL Query:</strong> {{ sql }}</p>
+{% if results %}
+    <ul>
+        {% for result in results %}
+            <li>Cinema: {{ result.cinema_name }} - Movie: {{ result.movie_title }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No results found.</p>
+{% endif %}
+{% endblock %}

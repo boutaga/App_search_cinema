@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Stage 4: Travel Time with JSONB</h2>
+<form method="POST">
+    <input type="text" name="user_location" value="{{ user_location }}" placeholder="Your Location">
+    <input type="text" name="max_travel_time" value="{{ max_travel_time }}" placeholder="Max Travel Time (minutes)">
+    <button type="submit">Search</button>
+</form>
+<p><strong>SQL Query:</strong> {{ sql }}</p>
+{% if results %}
+    <ul>
+        {% for cinema in results %}
+            <li>{{ cinema.name }} - Travel Time: {{ cinema.travel_time }} minutes</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No results found.</p>
+{% endif %}
+{% endblock %}

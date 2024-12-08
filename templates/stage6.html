@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Stage 6: RAG Search with LLM</h2>
+<form method="POST">
+    <input type="text" name="query" value="{{ query }}" placeholder="Enter your query">
+    <button type="submit">Search</button>
+</form>
+<p><strong>SQL Query:</strong> {{ sql }}</p>
+{% if response %}
+    <p><strong>Response:</strong> {{ response }}</p>
+{% else %}
+    <p>No results found.</p>
+{% endif %}
+{% endblock %}

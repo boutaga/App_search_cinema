@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Welcome to the Cinema Search App</h2>
+<p>Select a stage to explore different database technologies:</p>
+<ul>
+    <li><a href="{{ url_for('stage1') }}">Stage 1: Simple Search with WHERE and ILIKE</a></li>
+    <li><a href="{{ url_for('stage2') }}">Stage 2: Full-Text Search</a></li>
+    <li><a href="{{ url_for('stage3') }}">Stage 3: Geolocation with PostGIS</a></li>
+    <li><a href="{{ url_for('stage4') }}">Stage 4: Travel Time with JSONB</a></li>
+    <li><a href="{{ url_for('stage5') }}">Stage 5: Semantic Search with pgvector</a></li>
+    <li><a href="{{ url_for('stage6') }}">Stage 6: RAG Search with LLM</a></li>
+    <li><a href="{{ url_for('stage7') }}">Stage 7: Graph Database for Complex Relationships</a></li>
+</ul>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Stage 2: Full-Text Search</h2>
+<form method="POST">
+    <input type="text" name="query" value="{{ query }}" placeholder="Enter search terms">
+    <button type="submit">Search</button>
+</form>
+<p><strong>SQL Query:</strong> {{ sql }}</p>
+{% if results %}
+    <ul>
+        {% for cinema in results %}
+            <li>{{ cinema.name }} - Rank: {{ cinema.rank }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No results found.</p>
+{% endif %}
+{% endblock %}
