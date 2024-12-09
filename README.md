@@ -46,7 +46,7 @@ The example should work the same.
 ### **1. Clone the Repository**
 
 ```bash
-git clone https://github.com/yourusername/cinema_search_app.git
+git clone https://github.com/boutaga/cinema_search_app.git
 cd cinema_search_app
 ```
 
