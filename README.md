@@ -30,10 +30,16 @@ This web application demonstrates the evolution of database technologies in AI/M
 ## **Prerequisites**
 
 - Python 3.7 or higher
-- PostgreSQL with the following extensions:
+- PostgreSQL 15 or 16 with the following extensions:
   - PostGIS
   - pgvector
+  - AGE 
 - Required Python packages (listed in `requirements.txt`)
+
+Note : the initial setup was intended to work on PostgreSQL 17.2, but AGE is not compatible with 
+the latest version of PostgreSQL and the extension is not maintain anymore for the most part. 
+If you want to use the latest version of PG, I would suggest installing a Graph database instance like NeoJ on the side. 
+The example should work the same. 
 
 ## **Setup Instructions**
 
