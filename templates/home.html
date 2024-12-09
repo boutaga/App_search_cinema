@@ -10,5 +10,8 @@
     <li><a href="{{ url_for('stage5') }}">Stage 5: Semantic Search with pgvector</a></li>
     <li><a href="{{ url_for('stage6') }}">Stage 6: RAG Search with LLM</a></li>
     <li><a href="{{ url_for('stage7') }}">Stage 7: Graph Database for Complex Relationships</a></li>
+    <form action="/refresh_data" method="POST">
+        <button type="submit">Refresh Data from Google APIs</button>
+      </form>
 </ul>
 {% endblock %}
