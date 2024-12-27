@@ -5,7 +5,7 @@
     <input type="text" name="query" value="{{ query }}" placeholder="Enter genre">
     <button type="submit">Search</button>
 </form>
-<p><strong>SQL Query:</strong> {{ sql }}</p>
+<p><strong>SQL Query:</strong><pre><code class="language-sql"></code> {{ sql }}</code></pre></p>
 {% if results %}
     <ul>
         {% for result in results %}
