@@ -1,0 +1,27 @@
+# Context Management System - Git Attributes
+# Handle line endings properly for cross-platform compatibility
+
+# Shell scripts should always use LF
+*.sh text eol=lf
+.context-management/hooks/* text eol=lf
+compact_context text eol=lf
+phase text eol=lf
+
+# Configuration and data files
+.context-management/templates/* text
+.phase_status text
+.session_start text
+.session_base_commit text
+.current_phase text
+.phase_log text
+.context_status text
+
+# Archive files - keep as-is to preserve exact history
+.context-archives/** binary
+
+# Documentation files
+*.md text
+CONTEXT_PRESERVE.md text
+LAST_COMPACTION.md text
+current_progress.md text
+map.md text

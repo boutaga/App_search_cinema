@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+# Git post-commit hook for automatic context management
+#
+
+# Get the repository root
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+CONTEXT_MANAGER="${REPO_ROOT}/.context-management/compact_context.sh"
+SESSION_BASE_COMMIT_FILE="${REPO_ROOT}/.session_base_commit"
+PHASE_STATUS_FILE="${REPO_ROOT}/.phase_status"
+
+# Check if context management is installed
+if [[ ! -f "${CONTEXT_MANAGER}" ]]; then
+    exit 0
+fi
+
+# Count commits in current session
+if [[ -f "${SESSION_BASE_COMMIT_FILE}" ]]; then
+    BASE_COMMIT=$(cat "${SESSION_BASE_COMMIT_FILE}")
+    COMMIT_COUNT=$(git rev-list --count HEAD "^${BASE_COMMIT}" 2>/dev/null || echo 0)
+else
+    COMMIT_COUNT=1
+fi
+
+# Check if we should trigger compaction
+SHOULD_COMPACT=false
+REASON=""
+
+# Check commit count
+if [[ ${COMMIT_COUNT} -ge 5 ]]; then
+    SHOULD_COMPACT=true
+    REASON="5+ commits in session"
+fi
+
+# Check if phase 3 complete
+if [[ -f "${PHASE_STATUS_FILE}" ]] && grep -q "PHASE_3_COMPLETE" "${PHASE_STATUS_FILE}"; then
+    SHOULD_COMPACT=true
+    REASON="Phase 3 completed"
+fi
+
+# Check for compaction markers in commit message
+COMMIT_MSG=$(git log -1 --pretty=%B)
+if echo "${COMMIT_MSG}" | grep -qi "phase.*3.*complete\|implementation.*complete\|feature.*complete"; then
+    SHOULD_COMPACT=true
+    REASON="Implementation completed (detected from commit message)"
+fi
+
+# Trigger compaction if needed
+if [[ "${SHOULD_COMPACT}" == "true" ]]; then
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📦 Context Compaction Triggered"
+    echo "Reason: ${REASON}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # Run compaction in background to not block git
+    (
+        sleep 2  # Small delay to let git finish
+        "${CONTEXT_MANAGER}" --auto
+    ) &
+    
+    echo "Context compaction started in background..."
+    echo "Check LAST_COMPACTION.md for results"
+elif [[ ${COMMIT_COUNT} -eq 3 ]]; then
+    echo ""
+    echo "💡 Tip: 3 commits in session. Consider compaction after 5 commits."
+fi

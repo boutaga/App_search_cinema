@@ -1,0 +1,8 @@
+# Context Management System
+.context-archives/
+.phase_status
+.session_start
+.session_base_commit
+.current_phase
+.phase_log
+.context_status

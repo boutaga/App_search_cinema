@@ -1,0 +1,100 @@
+#!/bin/bash
+#
+# Git pre-push hook for context management
+# Ensures documentation is updated before pushing
+#
+
+# Get the repository root
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+CONTEXT_MANAGER="${REPO_ROOT}/.context-management/compact_context.sh"
+CURRENT_PROGRESS_FILE="${REPO_ROOT}/current_progress.md"
+MAP_FILE="${REPO_ROOT}/map.md"
+
+# Check if context management is installed
+if [[ ! -f "${CONTEXT_MANAGER}" ]]; then
+    exit 0
+fi
+
+# Colors
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🔍 Pre-push Context Check"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Check if documentation files are up to date
+NEEDS_UPDATE=false
+
+# Check current_progress.md
+if [[ -f "${CURRENT_PROGRESS_FILE}" ]]; then
+    LAST_UPDATE=$(grep -oP '\*Last Updated: \K[\d-]+' "${CURRENT_PROGRESS_FILE}" 2>/dev/null || echo "unknown")
+    TODAY=$(date +%Y-%m-%d)
+    
+    if [[ "${LAST_UPDATE}" != "${TODAY}" ]]; then
+        echo -e "${YELLOW}⚠${NC}  current_progress.md was last updated: ${LAST_UPDATE}"
+        NEEDS_UPDATE=true
+    else
+        echo -e "${GREEN}✓${NC} current_progress.md is up to date"
+    fi
+else
+    echo -e "${YELLOW}⚠${NC}  current_progress.md not found"
+    NEEDS_UPDATE=true
+fi
+
+# Check map.md
+if [[ -f "${MAP_FILE}" ]]; then
+    # Check if any source files are newer than map.md
+    NEWER_FILES=$(find "${REPO_ROOT}" -name "*.sh" -newer "${MAP_FILE}" 2>/dev/null | head -5)
+    if [[ -n "${NEWER_FILES}" ]]; then
+        echo -e "${YELLOW}⚠${NC}  map.md may be outdated (source files modified)"
+        NEEDS_UPDATE=true
+    else
+        echo -e "${GREEN}✓${NC} map.md appears current"
+    fi
+else
+    echo -e "${YELLOW}⚠${NC}  map.md not found"
+    NEEDS_UPDATE=true
+fi
+
+# If updates needed, ask user
+if [[ "${NEEDS_UPDATE}" == "true" ]]; then
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "Documentation may need updating before push."
+    echo ""
+    echo "Options:"
+    echo "  1) Run context compaction now (recommended)"
+    echo "  2) Push anyway"
+    echo "  3) Cancel push"
+    echo ""
+    read -p "Choice [1-3]: " choice
+    
+    case $choice in
+        1)
+            echo "Running context compaction..."
+            "${CONTEXT_MANAGER}" --force
+            echo -e "${GREEN}✓${NC} Documentation updated. Proceeding with push."
+            exit 0
+            ;;
+        2)
+            echo "Proceeding with push without update..."
+            exit 0
+            ;;
+        3)
+            echo "Push cancelled. Run 'compact_context.sh' to update documentation."
+            exit 1
+            ;;
+        *)
+            echo "Invalid choice. Push cancelled."
+            exit 1
+            ;;
+    esac
+else
+    echo ""
+    echo -e "${GREEN}✓${NC} All documentation appears current. Proceeding with push."
+fi
+
+exit 0
